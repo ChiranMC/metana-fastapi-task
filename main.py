@@ -14,7 +14,7 @@ db = client["metanatest"]
 
 
 class UserData(BaseModel):
-    # id: Optional[UUID] = None
+    id: Optional[str] = None
     firstname: str
     lastname: str
     email: str
@@ -37,9 +37,12 @@ async def create_userdata(userdata: UserData):
     # usersdata.append(userdata)
     return userdata
 
-@app.get("/userdata/", response_model=List[UserData])
-def read_userdata():
-    return usersdata
+@app.get("/usersdata/", response_model=List[UserData])
+async def read_userdata():
+    usersList = await usersdata.find().to_list(length=1000)
+    for metanatest in usersList:
+        metanatest['_id'] = str(metanatest['_id'])
+    return usersList
 
 @app.get("/")
 async def root():
