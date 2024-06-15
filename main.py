@@ -8,6 +8,14 @@ app = FastAPI()
 class UserData(BaseModel):
     id: Optional[UUID] = None
     firstname: str
+    lastname: str
+    email: str
+    country: str
+    phonenumber: str
+    languagesandframeworks: str
+    experience: int
+    annualcompensation: str
+    linkedinurl: str
 
 usersdata = []
 
