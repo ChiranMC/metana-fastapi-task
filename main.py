@@ -40,8 +40,8 @@ async def create_userdata(userdata: UserData):
 @app.get("/usersdata/", response_model=List[UserData])
 async def read_userdata():
     usersList = await usersdata.find().to_list(length=1000)
-    for metanatest in usersList:
-        metanatest['_id'] = str(metanatest['_id'])
+    for user in usersList:
+        user['_id'] = str(user['_id'])
     return usersList
 
 @app.get("/")
