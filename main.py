@@ -14,7 +14,7 @@ db = client["metanatest"]
 
 
 class UserData(BaseModel):
-    _id: Optional[UUID] = None
+    id: Optional[UUID] = None
     firstname: str
     lastname: str
     email: str
