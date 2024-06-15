@@ -31,6 +31,7 @@ usersdata = db.get_collection("metanatest")
 @app.post("/userdata/", response_model=UserData)
 async def create_userdata(userdata: UserData):
     # userdata.id = uuid4()
+    # Note: I used a email validation to make sure already exisisting user dont get entered as new users !
     checkEmail = await usersdata.find_one({"email": userdata.email})
     if checkEmail is None:
         userdata_d = userdata.dict()
@@ -53,7 +54,7 @@ async def read_a_user(user_email: str):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
-@app.delete("/userdata/{user_email}")
+@app.delete("/deleteuser/{user_email}")
 async def delete_user(user_email: str):
     result = await usersdata.find_one({"email": user_email})
     if result is not None:
@@ -73,7 +74,3 @@ async def root():
     except Exception as e:
         return {"message": "connection failed", "error": str(e)}
     # return {"message": "works"}
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
