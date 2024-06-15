@@ -71,7 +71,7 @@ async def root():
         # check dbconnection
         db = client.get_database()
         collections = await db.list_collection_names()
-        return {"message": "All the HTTP Methods : POST =  /userdata/,  GET all users info: /usersdata/,  GET user info by emai: /userdata/user_email,  DELETE user: /deleteuser/",
-                "message": "connection working", "collections": collections}
+        return {"ReadMe message": "All the HTTP Methods : POST =  /userdata/,  GET all users info: /usersdata/,  GET user info by emai: /userdata/user_email,  DELETE user: /deleteuser/",
+                "DB status message": "connection working", "collections": collections}
     except Exception as e:
         return {"message": "connection failed", "error": str(e)}
