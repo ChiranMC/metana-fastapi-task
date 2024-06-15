@@ -31,6 +31,7 @@ usersdata = db.get_collection("metanatest")
 @app.post("/userdata/", response_model=UserData)
 async def create_userdata(userdata: UserData):
     # userdata.id = uuid4()
+    
     # Note: I used a email validation to make sure already exisisting user dont get entered as new users !
     checkEmail = await usersdata.find_one({"email": userdata.email})
     if checkEmail is None:
@@ -66,12 +67,11 @@ async def delete_user(user_email: str):
 
 @app.get("/")
 async def root():
-    print("hellow")
     try:
-        # Attempt to list collections in the database
+        # check dbconnection
         db = client.get_database()
         collections = await db.list_collection_names()
-        return {"message": "connection working", "collections": collections}
+        return {"message": "All the HTTP Methods : POST =  /userdata/,  GET all users info: /usersdata/,  GET user info by emai: /userdata/user_email,  DELETE user: /deleteuser/",
+                "message": "connection working", "collections": collections,}
     except Exception as e:
         return {"message": "connection failed", "error": str(e)}
-    # return {"message": "works"}
