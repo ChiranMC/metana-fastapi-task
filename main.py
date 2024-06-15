@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from fastapi import FastAPI
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -14,7 +14,7 @@ db = client["metanatest"]
 
 
 class UserData(BaseModel):
-    _id: Optional[str] = Field(None, alias='_id')
+    _id: Optional[str] = None
     firstname: str
     lastname: str
     email: str
@@ -24,12 +24,6 @@ class UserData(BaseModel):
     experience: int
     annualcompensation: str
     linkedinurl: str
-
-    class Config:
-        allow_population_by_field_name = True
-        json_encoders = {
-            ObjectId: str
-        }
 
 # usersdata = []
 usersdata = db.get_collection("metanatest")
@@ -46,6 +40,8 @@ async def create_userdata(userdata: UserData):
 @app.get("/usersdata/", response_model=List[UserData])
 async def read_userdata():
     usersList = await usersdata.find().to_list(length=1000)
+    for user in usersList:
+        user['_id'] = str(user['_id'])
     return usersList
 
 @app.get("/")
