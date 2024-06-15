@@ -43,7 +43,14 @@ def read_userdata():
 
 @app.get("/")
 async def root():
-    return {"message": "Hello Chiran it works"}
+    try:
+        # Attempt to list collections in the database
+        db = client.get_database()
+        collections = await db.list_collection_names()
+        return {"message": "Database connection is established", "collections": collections}
+    except Exception as e:
+        return {"message": "Database connection failed", "error": str(e)}
+    # return {"message": "Hello Chiran it works"}
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Optional[str] = None):
