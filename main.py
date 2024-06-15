@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 app = FastAPI()
 
@@ -14,7 +14,7 @@ db = client["metanatest"]
 
 
 class UserData(BaseModel):
-    _id: Optional[str] = None
+    _id: Optional[str] = Field(None, alias='_id')
     firstname: str
     lastname: str
     email: str
@@ -24,6 +24,12 @@ class UserData(BaseModel):
     experience: int
     annualcompensation: str
     linkedinurl: str
+
+    class Config:
+        allow_population_by_field_name = True
+        json_encoders = {
+            ObjectId: str
+        }
 
 # usersdata = []
 usersdata = db.get_collection("metanatest")
@@ -40,8 +46,6 @@ async def create_userdata(userdata: UserData):
 @app.get("/usersdata/", response_model=List[UserData])
 async def read_userdata():
     usersList = await usersdata.find().to_list(length=1000)
-    for user in usersList:
-        user['_id'] = str(user['_id'])
     return usersList
 
 @app.get("/")
@@ -50,9 +54,9 @@ async def root():
         # Attempt to list collections in the database
         db = client.get_database()
         collections = await db.list_collection_names()
-        return {"message": "Database connection is established", "collections": collections}
+        return {"message": "connection working", "collections": collections}
     except Exception as e:
-        return {"message": "Database connection failed", "error": str(e)}
+        return {"message": "connection failed", "error": str(e)}
     # return {"message": "Hello Chiran it works"}
 
 @app.get("/items/{item_id}")
