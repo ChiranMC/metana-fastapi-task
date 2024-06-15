@@ -1,10 +1,25 @@
-from typing import Optional
-
+from typing import List, Optional
+from uuid import UUID, uuid4
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
 
+class UserData(BaseModel):
+    id: Optional[UUID] = None
+    firstname: str
+
+usersdata = []
+
+@app.post("/userdata/", response_model=UserData)
+def create_userdata(userdata: UserData):
+    userdata.id = uuid4()
+    usersdata.append(userdata)
+    return userdata
+
+@app.get("/userdata/", response_model=List[UserData])
+def read_userdata():
+    return usersdata
 
 @app.get("/")
 async def root():
