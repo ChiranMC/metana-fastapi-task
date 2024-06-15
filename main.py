@@ -14,7 +14,7 @@ db = client["metanatest"]
 
 
 class UserData(BaseModel):
-    id: Optional[UUID] = None
+    _id: Optional[str] = None
     firstname: str
     lastname: str
     email: str
@@ -30,7 +30,7 @@ usersdata = db.get_collection("metanatest")
 
 @app.post("/userdata/", response_model=UserData)
 async def create_userdata(userdata: UserData):
-    userdata.id = uuid4()
+    # userdata.id = uuid4()
     userdata_d = userdata.dict()
     await usersdata.insert_one(userdata_d)
 
