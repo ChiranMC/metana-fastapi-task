@@ -29,7 +29,7 @@ class UserData(BaseModel):
 usersdata = db.get_collection("metanatest")
 
 @app.post("/userdata/", response_model=UserData)
-def create_userdata(userdata: UserData):
+async def create_userdata(userdata: UserData):
     userdata.id = uuid4()
     userdata_d = userdata.dict()
     await usersdata.insert_one(userdata_d)
