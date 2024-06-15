@@ -31,8 +31,12 @@ usersdata = db.get_collection("metanatest")
 @app.post("/userdata/", response_model=UserData)
 async def create_userdata(userdata: UserData):
     # userdata.id = uuid4()
-    userdata_d = userdata.dict()
-    await usersdata.insert_one(userdata_d)
+    checkEmail = await usersdata.find_one({"email": userdata.email})
+    if checkEmail is None:
+        userdata_d = userdata.dict()
+        await usersdata.insert_one(userdata_d)
+    else:
+        return {"message": "User with this mail already exist!"}
     # usersdata.append(userdata)
     return userdata
 
