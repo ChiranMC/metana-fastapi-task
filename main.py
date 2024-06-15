@@ -1,9 +1,17 @@
 from typing import List, Optional
 from uuid import UUID, uuid4
+from motor.motor_asyncio import AsyncIOMotorClient
+from bson import ObjectId
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
+
+#DB Connection
+MongoURL = "mongodb+srv://metanatest:metanatest@cluster0.sgcmcsf.mongodb.net/metanatest?retryWrites=true&w=majority&appName=Cluster0"
+client = AsyncIOMotorClient(MongoURL)
+db = client["metanatest"]
+
 
 class UserData(BaseModel):
     id: Optional[UUID] = None
@@ -17,12 +25,16 @@ class UserData(BaseModel):
     annualcompensation: str
     linkedinurl: str
 
-usersdata = []
+# usersdata = []
+usersdata = db.get_collection("metanatest")
 
 @app.post("/userdata/", response_model=UserData)
 def create_userdata(userdata: UserData):
     userdata.id = uuid4()
-    usersdata.append(userdata)
+    userdata_d = userdata.dict()
+    await usersdata.insert_one(userdata_d)
+
+    # usersdata.append(userdata)
     return userdata
 
 @app.get("/userdata/", response_model=List[UserData])
