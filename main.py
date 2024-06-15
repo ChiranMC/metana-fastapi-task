@@ -36,8 +36,7 @@ async def create_userdata(userdata: UserData):
         userdata_d = userdata.dict()
         await usersdata.insert_one(userdata_d)
     else:
-        return {"message": "User with this mail already exist!"}
-    # usersdata.append(userdata)
+        raise HTTPException(status_code=409, detail="A User already exist under that email")
     return userdata
 
 @app.get("/usersdata/", response_model=List[UserData])
