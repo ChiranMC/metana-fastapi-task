@@ -66,6 +66,7 @@ async def delete_user(user_email: str):
 
 @app.get("/")
 async def root():
+    print("hellow")
     try:
         # Attempt to list collections in the database
         db = client.get_database()
