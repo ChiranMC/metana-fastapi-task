@@ -2,7 +2,7 @@ from typing import List, Optional
 from uuid import UUID, uuid4
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -33,7 +33,6 @@ async def create_userdata(userdata: UserData):
     # userdata.id = uuid4()
     userdata_d = userdata.dict()
     await usersdata.insert_one(userdata_d)
-
     # usersdata.append(userdata)
     return userdata
 
@@ -43,6 +42,13 @@ async def read_userdata():
     #for user in usersList:
     #    user['_id'] = str(user['_id'])
     return usersList
+
+@app.get("/userdata/{user_email}", response_model=UserData)
+def read_user(user_email: str):
+    for user in usersdata:
+        if user.email == user_email:
+            return user
+    return HTTPException(status_code=404, detail="user not found")
 
 @app.get("/")
 async def root():
