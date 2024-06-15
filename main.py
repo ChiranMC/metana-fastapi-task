@@ -44,11 +44,20 @@ async def read_userdata():
     return usersList
 
 @app.get("/userdata/{user_email}", response_model=UserData)
-async def read_user(user_email: str):
+async def read_a_user(user_email: str):
     user = await usersdata.find_one({"email": user_email})
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+@app.delete("/userdata/{user_email}")
+async def delete_user(user_email: str):
+    result = await usersdata.find_one({"email": user_email})
+    if result is not None:
+        await usersdata.delete_one({"email": user_email})
+        return {"message": "User with email has been deleted"}
+    else:
+        return {"message": "User not found"}
 
 
 @app.get("/")
@@ -60,7 +69,7 @@ async def root():
         return {"message": "connection working", "collections": collections}
     except Exception as e:
         return {"message": "connection failed", "error": str(e)}
-    # return {"message": "Hello Chiran it works"}
+    # return {"message": "works"}
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Optional[str] = None):
