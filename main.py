@@ -44,11 +44,12 @@ async def read_userdata():
     return usersList
 
 @app.get("/userdata/{user_email}", response_model=UserData)
-def read_user(user_email: str):
-    for user in usersdata:
-        if user.email == user_email:
-            return user
-    return HTTPException(status_code=404, detail="user not found")
+async def read_user(user_email: str):
+    user = await usersdata.find_one({"email": user_email})
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
 
 @app.get("/")
 async def root():
